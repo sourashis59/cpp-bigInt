@@ -14,6 +14,134 @@ char toChar(int n)
     return '0' + n;
 }
 
+void removeZerosFromFrontOfString(string &s)
+{
+    //remove zeros from front
+    int k = 0;
+    while (k < s.size() && s[k] == '0')
+        k++;
+
+    s.erase(0, k);
+
+    if (s.empty())
+        s = "0";
+}
+
+string addStrings(string s1, string s2)
+{
+
+    removeZerosFromFrontOfString(s1);
+    removeZerosFromFrontOfString(s2);
+
+    if (s1.empty())
+        return s2;
+    if (s2.empty())
+        return s1;
+
+    int n1 = s1.size(), n2 = s2.size();
+
+    //make s1 point to the larger string and s2 point to the smaller string
+    if (n1 < n2)
+    {
+        swap(s1, s2);
+        swap(n1, n2);
+    }
+
+    string res(n1 + 1, '0');
+
+    // cout<<s1<<", "<<s2<<", "<<res<<endl;
+
+    int carry = 0;
+
+    int i = n1 - 1, j = n2 - 1;
+    while (i >= 0)
+    {
+        int s = 0;
+        if (j >= 0)
+            s = toInt(s1[i]) + toInt(s2[j]) + carry;
+        else
+            s = toInt(s1[i]) + carry;
+
+        int d = s % 10;
+        carry = s / 10;
+
+        // cout<<"\ns = "<<s<<",  d = "<<d<<" , carry  = "<<carry<<endl;
+
+        res[i + 1] = toChar(d);
+
+        // cout<<"\nres[i+1] = "<< res[i+1] <<endl;
+
+        i--;
+        j--;
+    }
+
+    // cout<<"\n\n"<<res<<"\n\n\n";
+
+    if (carry > 0)
+        res[0] = toChar(carry);
+
+    removeZerosFromFrontOfString(res);
+
+    return res;
+}
+
+//multiplies positive integers
+string multiplyPositiveStrings(string s1, string s2)
+{
+    //Your code here
+
+    removeZerosFromFrontOfString(s1);
+    removeZerosFromFrontOfString(s2);
+
+    if (s1.empty() || s2.empty())
+        return "0";
+
+    int n1 = s1.size(), n2 = s2.size();
+    //make s1 point to the larger string and s2 point to the smaller string
+    if (n1 < n2)
+    {
+        swap(s1, s2);
+        swap(n1, n2);
+    }
+
+    string res(n1 + n2 + 1, '0');
+
+    if (n2 == 1)
+    {
+        int k = n1 + n2;
+
+        int carry = 0;
+        for (int i = n1 - 1; i >= 0; i--)
+        {
+            int p = toInt(s1[i]) * toInt(s2[0]) + carry;
+            int d = p % 10;
+            carry = p / 10;
+
+            res[k--] = toChar(d);
+        }
+
+        if (carry > 0)
+            res[k] = toChar(carry);
+
+        removeZerosFromFrontOfString(res);
+        return res;
+    }
+
+    for (int i = 0; i < n2; i++)
+    {
+        string resIntoTen = res;
+        resIntoTen.push_back('0');
+
+        string digit(1, s2[i]);
+
+        res = addStrings(resIntoTen, multiplyPositiveStrings(s1, digit));
+    }
+
+    removeZerosFromFrontOfString(res);
+
+    return res;
+}
+
 class bigInt
 {
     enum sign_type
@@ -40,10 +168,10 @@ private:
     friend bigInt subtract(bigInt a, bigInt b);
 
     //multiplies 2 positive integers
-    bigInt multipyPositiveNums();
+    friend bigInt multipyPositiveNums(bigInt a, bigInt b);
 
     //multiplies 2 integers(may be positive or negative or zero)
-    bigInt multiply();
+    friend bigInt multiply(bigInt a, bigInt b);
 
     //adds 2 integers(may be positive or negative or zero)
     friend bigInt add(bigInt a, bigInt b);
@@ -85,6 +213,24 @@ public:
     //*______________________ARITHMETIC OPERATOR___________________________________________
     friend bigInt operator-(bigInt a, bigInt b);
     friend bigInt operator+(bigInt a, bigInt b);
+    friend bigInt operator*(bigInt a, bigInt b);
+
+    bigInt operator++();    // Prefix
+    bigInt operator++(int); // Postfix
+    bigInt operator--();    // Prefix
+    bigInt operator--(int); // Postfix
+
+    //*___________________ASSIGNMENT OPERATOR__________________________________
+    bigInt operator=(const bigInt &a);
+    bigInt operator=(const string &s);
+    bigInt operator=(long long a);
+    bigInt operator=(long a);
+    bigInt operator=(int a);
+
+    bigInt operator+=(const bigInt &a);
+    bigInt operator-=(const bigInt &a);
+    bigInt operator*=(const bigInt &a);
+    // bigInt operator/=(const bigInt &a);
 };
 
 bool bigInt::areDigitsValid() const
@@ -210,7 +356,9 @@ bigInt::bigInt(const char *s)
 
 bigInt::bigInt(const bigInt &a)
 {
-    *this = a;
+    this->digits = a.digits;
+    this->sign = a.sign;
+    this->numOfDigit = a.numOfDigit;
 }
 
 ostream &operator<<(ostream &output, const bigInt &n)
@@ -491,13 +639,110 @@ bigInt add(bigInt a, bigInt b)
     }
 }
 
+bigInt bigInt::operator=(const bigInt &a)
+{
+    this->sign = a.sign;
+    this->digits = a.digits;
+    this->numOfDigit = a.numOfDigit;
+
+    return *this;
+}
+
+bigInt bigInt::operator=(const string &s)
+{
+    *this = bigInt(s);
+    return *this;
+}
+
+bigInt bigInt::operator=(long long a)
+{
+    *this = bigInt(a);
+    return *this;
+}
+bigInt bigInt::operator=(long a)
+{
+    *this = bigInt(a);
+    return *this;
+}
+
+bigInt bigInt::operator=(int a)
+{
+    *this = bigInt(a);
+    return *this;
+}
+
 bigInt operator+(bigInt a, bigInt b)
 {
     return add(a, b);
 }
+
+bigInt multipyPositiveNums(bigInt a, bigInt b)
+{
+    bigInt res = multiplyPositiveStrings(a.digits, b.digits);
+    return res;
+}
+
+bigInt multiply(bigInt a, bigInt b)
+{
+    bigInt res = multipyPositiveNums(a, b);
+    if ((a < 0 && b < 0) || (a < 0 && b < 0))
+        return res;
+    else
+        return -res;
+}
+
+bigInt operator*(bigInt a, bigInt b)
+{
+    return multiply(a, b);
+}
+
+bigInt bigInt::operator+=(const bigInt &a)
+{
+    *this = *this + a;
+    return *this;
+}
+
+bigInt bigInt::operator-=(const bigInt &a)
+{
+    *this = *this - a;
+    return *this;
+}
+bigInt bigInt::operator*=(const bigInt &a)
+{
+    *this = (*this) * a;
+    return *this;
+}
+
+bigInt bigInt::operator++() //*PREFIX
+{
+    (*this) += 1;
+    bigInt res = (*this);
+    return res;
+}
+
+bigInt bigInt::operator++(int) //* POSTFIX
+{
+    bigInt res = (*this);
+    (*this) += 1;
+    return res;
+}
+
+bigInt bigInt::operator--() //*PREFIX
+{
+    (*this) -= 1;
+    bigInt res = (*this);
+    return res;
+}
+
+bigInt bigInt::operator--(int) //* POSTFIX
+{
+    bigInt res = (*this);
+    (*this) -= 1;
+    return res;
+}
 int main()
 {
-    cout << "\n\nHello earth\n\n\n";
+    cout << "\n\nHello earth :)\n\n\n";
 
     bigInt a = "-69";
     bigInt b = 123;
@@ -521,5 +766,17 @@ int main()
     // cout << "\nabs(a-b) = " << absoluteDiffOfPositiveNums(a, b);
 
     cout << "\na + b = " << (a + b);
+
+    cout << "\na * b = " << (a * b);
+
+    a *= b;
+    cout << "\nafter doing  a*=b ,  a = " << a;
+
+    cout << "\na++ = " << a++;
+    cout << "\na = " << a;
+    cout << "\n++a = " << ++a;
+    cout << "\na = " << a;
+
+    cout << "\n\n\n___________________________END__________________________________________\n";
     return 0;
 }
