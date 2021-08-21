@@ -176,6 +176,9 @@ private:
     //adds 2 integers(may be positive or negative or zero)
     friend bigInt add(bigInt a, bigInt b);
 
+    //divides a by divisor and returns {quotient , remainder}
+    friend pair<bigInt, bigInt> divide(bigInt a, bigInt divisor);
+
 public:
     void makePositive();
 
@@ -214,6 +217,9 @@ public:
     friend bigInt operator-(bigInt a, bigInt b);
     friend bigInt operator+(bigInt a, bigInt b);
     friend bigInt operator*(bigInt a, bigInt b);
+    friend bigInt operator/(bigInt a, bigInt divisor);
+    //Returns positive remainder
+    friend bigInt operator%(bigInt a, bigInt divisor);
 
     bigInt operator++();    // Prefix
     bigInt operator++(int); // Postfix
@@ -230,7 +236,8 @@ public:
     bigInt operator+=(const bigInt &a);
     bigInt operator-=(const bigInt &a);
     bigInt operator*=(const bigInt &a);
-    // bigInt operator/=(const bigInt &a);
+    bigInt operator/=(const bigInt &a);
+    bigInt operator%=(const bigInt &a);
 
     //*_________________________ARITHMETIC FUNCTIONS____________________________
     bigInt pow(bigInt a, bigInt n); // ONLY SUPPORTS POSITIVE VALUE FOR n
@@ -770,6 +777,61 @@ bigInt::operator string()
     return s;
 }
 
+pair<bigInt, bigInt> divide(bigInt a, bigInt divisor)
+{
+
+    //*division by zero remaining_______________________________________________
+    if (divisor == 0)
+    {
+    }
+
+    if (a == 0)
+        return {0, 0};
+
+    bigInt quotient = 0;
+    bigInt remainder = abs(a);
+    bigInt abs_divisor = abs(divisor);
+
+    while (remainder >= abs_divisor)
+    {
+        remainder -= abs_divisor;
+        quotient++;
+    }
+
+    //remainder will always be positive
+    if (a < 0 && remainder > 0)
+        remainder = abs_divisor - remainder;
+
+    if ((a < 0 && divisor > 0) || (a > 0 && divisor < 0))
+        quotient = -quotient;
+
+    return {quotient, remainder};
+}
+
+bigInt operator/(bigInt a, bigInt divisor)
+{
+    pair<bigInt, bigInt> p = divide(a, divisor);
+    return p.first;
+}
+
+bigInt operator%(bigInt a, bigInt divisor)
+{
+    pair<bigInt, bigInt> p = divide(a, divisor);
+    return p.second;
+}
+
+bigInt bigInt::operator/=(const bigInt &a)
+{
+    *this = *this / a;
+    return *this;
+}
+
+bigInt bigInt::operator%=(const bigInt &a)
+{
+    *this = *this % a;
+    return *this;
+}
+
 // int main()
 // {
 //     cout << "\n\nHello earth :)\n\n\n";
@@ -830,6 +892,14 @@ int main()
     cout << "\nb = " << b;
 
     cout << "\na * b = " << a * b;
+
+    bigInt x = -100, y = 12;
+
+    // x %= y;
+    cout << "\n"
+         << x << " / " << y << " = " << (x / y);
+    cout << "\n"
+         << x << " % " << y << " = " << (x % y);
 
     cout << "\n\n\n___________________________END__________________________________________\n";
     return 0;
