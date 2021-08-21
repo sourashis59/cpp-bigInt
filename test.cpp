@@ -231,6 +231,15 @@ public:
     bigInt operator-=(const bigInt &a);
     bigInt operator*=(const bigInt &a);
     // bigInt operator/=(const bigInt &a);
+
+    //*_________________________ARITHMETIC FUNCTIONS____________________________
+    bigInt pow(bigInt a, bigInt n); // ONLY SUPPORTS POSITIVE VALUE FOR n
+
+    //*____________________________type casting_____________________________
+
+    //Converts bigInt to string
+    friend string to_string(const bigInt &a);
+    operator string();
 };
 
 bool bigInt::areDigitsValid() const
@@ -685,7 +694,7 @@ bigInt multipyPositiveNums(bigInt a, bigInt b)
 bigInt multiply(bigInt a, bigInt b)
 {
     bigInt res = multipyPositiveNums(a, b);
-    if ((a < 0 && b < 0) || (a < 0 && b < 0))
+    if ((a < 0 && b < 0) || (a > 0 && b > 0))
         return res;
     else
         return -res;
@@ -740,42 +749,87 @@ bigInt bigInt::operator--(int) //* POSTFIX
     (*this) -= 1;
     return res;
 }
+
+string to_string(const bigInt &a)
+{
+    string s;
+    if (a.isNegative())
+        s += "-";
+
+    s += a.digits;
+    return s;
+}
+
+bigInt::operator string()
+{
+    string s;
+    if (isNegative())
+        s += "-";
+
+    s += digits;
+    return s;
+}
+
+// int main()
+// {
+//     cout << "\n\nHello earth :)\n\n\n";
+
+//     bigInt a = "-69";
+//     bigInt b = 123;
+//     bigInt c("-000123456");
+
+//     cout << "\na = " << a;
+//     cout << "\nb = " << b;
+//     cout << "\nc = " << c;
+
+//     cout << endl
+//          << (a == 0) << endl;
+
+//     if (a >= b)
+//         cout << "\na>=b";
+
+//     bigInt res = addPositiveNums(a, b);
+
+//     cout << "\n-a = " << -a;
+//     cout << "\n|a| + |b| = " << addPositiveNums(a, b);
+
+//     // cout << "\nabs(a-b) = " << absoluteDiffOfPositiveNums(a, b);
+
+//     cout << "\na + b = " << (a + b);
+
+//     cout << "\na * b = " << (a * b);
+
+//     a *= b;
+//     cout << "\nafter doing  a*=b ,  a = " << a;
+
+//     cout << "\na++ = " << a++;
+//     cout << "\na = " << a;
+//     cout << "\n++a = " << ++a;
+//     cout << "\na = " << a;
+
+//     string s = string(a);
+//     cout << "\ns = " << s;
+
+//     cout << "\n"
+//          << to_string(b);
+//     cout << "\n\n\n___________________________END__________________________________________\n";
+//     return 0;
+// }
+
 int main()
 {
     cout << "\n\nHello earth :)\n\n\n";
 
-    bigInt a = "-69";
-    bigInt b = 123;
-    bigInt c("-000123456");
+    string num1 = "2";
+    string num2 = "3";
+
+    bigInt a = num1;
+    bigInt b = num2;
 
     cout << "\na = " << a;
     cout << "\nb = " << b;
-    cout << "\nc = " << c;
 
-    cout << endl
-         << (a == 0) << endl;
-
-    if (a >= b)
-        cout << "\na>=b";
-
-    bigInt res = addPositiveNums(a, b);
-
-    cout << "\n-a = " << -a;
-    cout << "\n|a| + |b| = " << addPositiveNums(a, b);
-
-    // cout << "\nabs(a-b) = " << absoluteDiffOfPositiveNums(a, b);
-
-    cout << "\na + b = " << (a + b);
-
-    cout << "\na * b = " << (a * b);
-
-    a *= b;
-    cout << "\nafter doing  a*=b ,  a = " << a;
-
-    cout << "\na++ = " << a++;
-    cout << "\na = " << a;
-    cout << "\n++a = " << ++a;
-    cout << "\na = " << a;
+    cout << "\na * b = " << a * b;
 
     cout << "\n\n\n___________________________END__________________________________________\n";
     return 0;
