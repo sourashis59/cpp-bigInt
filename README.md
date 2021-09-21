@@ -12,8 +12,7 @@
                                 relational operators : <, >, =, >= , <=, == , != 
                                 assignment operator : =, += , -= , *=, /=, %=
                                 member functions : isEven() , isOdd(), pow() 
-                                friend functions: pow(), factorial(), abs() , to_string()
-                                
+                                friend functions: pow(), factorial(), abs() , to_string()                                
                                 Supported Constructors:
                                                         bigInt();
                                                         bigInt(int n);
