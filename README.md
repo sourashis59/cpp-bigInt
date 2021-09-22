@@ -2,7 +2,7 @@
 
 
 *Name : Sourashis Mondal
-*Github link: https://github.com/SourashisHeartHacker/cpp-bigInt
+*Github link: https://github.com/sourashis59/cpp-bigInt
 
 * Details: 
     This library supports operators and functions for handling big integers. 
